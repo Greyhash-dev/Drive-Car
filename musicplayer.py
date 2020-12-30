@@ -15,16 +15,16 @@ def run():
         else:
             pygame.mixer.music.stop()
             if playing == 1:
-                pygame.mixer.music.load("./music/funny.mp3")
+                pygame.mixer.music.load("./music/funny.wav")
                 pygame.mixer.music.play(-1, 0.0)
             elif playing == 2:
-                pygame.mixer.music.load("./music/r1.mp3")
+                pygame.mixer.music.load("./music/r1.wav")
                 pygame.mixer.music.play(-1, 0.0)
             elif playing == 3:
-                pygame.mixer.music.load("./music/r2.mp3")
+                pygame.mixer.music.load("./music/r2.wav")
                 pygame.mixer.music.play(-1, 0.0)
             elif playing == 4:
-                pygame.mixer.music.load("./music/r3.mp3")
+                pygame.mixer.music.load("./music/r3.wav")
                 pygame.mixer.music.play(-1, 0.0)
             playing = 0
 
