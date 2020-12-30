@@ -11,7 +11,7 @@ python3 main.py
 This is my first Project with AI, I hope you like it!
 I will document and tidy up the Code soon!
 
-##Debugging:
+### Debugging:
 For the Error 'AttributeError: module 'neat' has no attribute 'config'':
 ```
 pip uninstall neat
