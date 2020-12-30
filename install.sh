@@ -30,7 +30,7 @@ function checkAPTinstall() {
     echo    # (optional) move to a new line
     if [[ $REPLY =~ ^[Yy]$ ]]
     then
-    sudo apt-get install $APTPCKG
+    sudo apt-get install $APTPCKG -y
     else
     echo "This package is required for this to function!"
     exit
@@ -67,3 +67,4 @@ checkPIPinstall "graphviz"
 checkPIPinstall "matplotlib"
 checkPIPinstall "numpy"
 checkAPTinstall "graphviz"
+echo "Drive-Car was successfully installed!"
