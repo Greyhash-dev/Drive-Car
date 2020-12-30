@@ -1,6 +1,6 @@
 # Drive Car!
 A simple self-learning game example using the python neat library
-###Installation:
+### Installation:
 ```
 git clone git@github.com:Greyhash-dev/Drive-Car.git
 pip install -r requirements.txt
