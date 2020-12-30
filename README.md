@@ -3,12 +3,14 @@ A simple self-learning game example using the python neat library
 ### Installation:
 ```
 git clone git@github.com:Greyhash-dev/Drive-Car.git
+cd Drive-Car
 pip install -r requirements.txt
 python3 main.py
 ```
 or:
 ```
 git clone git@github.com:Greyhash-dev/Drive-Car.git
+cd Drive-Car
 pip3 install -r requirements.txt
 python3 main.py
 ```
