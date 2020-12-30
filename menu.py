@@ -22,9 +22,9 @@ class menuitem:
         self.add = ""
         if self.switch:
             if self.switchstatus:
-                self.add = " ON"
+                self.add = " | ON"
             else:
-                self.add = " OFF"
+                self.add = " | OFF"
         self.submenu = submenu
         self.function = function
 
@@ -47,10 +47,10 @@ class menuitem:
             if pressed:
                 if self.switch:
                     if self.switchstatus:
-                        self.add = " OFF"
+                        self.add = " | OFF"
                         self.switchstatus = False
                     else:
-                        self.add = " ON"
+                        self.add = " | ON"
                         self.switchstatus = True
                 else:
                     self.function()

@@ -31,6 +31,7 @@ def run():
 
 class Player:
     def __init__(self):
+        pygame.mixer.pre_init(44100, 16, 2, 4096)
         global playing, stop_threads
         stop_threads = False
         playing = 0
