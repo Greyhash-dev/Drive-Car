@@ -29,4 +29,3 @@ or:
 pip3 uninstall neat
 sudo pip3 install neat-python 
 ```
-
