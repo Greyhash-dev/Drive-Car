@@ -6,6 +6,7 @@ from rotate import blitRotate
 import math
 
 
+# This is a stolen function to determine where two lines intersect
 def findIntersect(Ax1, Ay1, Ax2, Ay2, Bx1, By1, Bx2, By2):
     d = (By2 - By1) * (Ax2 - Ax1) - (Bx2 - Bx1) * (Ay2 - Ay1)
 
@@ -22,6 +23,11 @@ def findIntersect(Ax1, Ay1, Ax2, Ay2, Bx1, By1, Bx2, By2):
     return math.sqrt(((Ax1-x)**2)+((Ay1-y)**2))
 
 
+# Every Car in this Game is a Object
+# carid | int = This is a unique ID for every Car
+# boarders | [[[int, int], [int, int]],[[int, int], [int, int]],...] = (next line)
+# Every Element in the top level Array is one Line witch connects up of two points in the format of [x, y]
+# showlines | boolean = Show the 'Lasers' of the Cars or do not show them
 class car:
     def __init__(self, carid, boarders, showlines):
         self.boarders = boarders    # All the boarders of the game
@@ -53,7 +59,9 @@ class car:
         if len(self.gashistory) > 60:
             self.gashistory.pop(0)
 
-
+    # This function draws the 'Lasers' of the Cars and uses the minimum Value where it Intersects with a other
+    # Line, if they do not intersect, the Value is 200, this than gets output as an Array in the Format:
+    # [Laser1, Laser2, Laser3, Laser4, Laser5], this than gets fed into the AI
     def drawlines(self, pos, angle, screen):
         xpos, ypos = pos
         lr = [

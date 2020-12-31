@@ -6,13 +6,19 @@ import time
 from gameenv import Game
 from musicplayer import Player
 
+
+# Global Variable if the Mouse button got pressed, although this is not really clean, it was the simplest way i could
+# Come up with
 pressed = False
 
-def test():
-    print("TODO")
 
+# Class of the menu items
+# name | string = the name that shines up inside the Menu
+# size | float = The size of the writing
+# screensize | [int, int] = The screen size (width x height)
+# function | function = the function that gets called when pressed on this menu point
 class menuitem:
-    def __init__(self, name, submenu, size, screensize, function, **kwargs):
+    def __init__(self, name, size, screensize, function, **kwargs):
         self.switch = kwargs.get('switch', False)
         self.switchstatus = kwargs.get('switchstatus', False)
         self.name = name
@@ -25,7 +31,6 @@ class menuitem:
                 self.add = " | ON"
             else:
                 self.add = " | OFF"
-        self.submenu = submenu
         self.function = function
 
     def getobject(self):
@@ -40,7 +45,7 @@ class menuitem:
         else:
             return [False]
 
-    def update(self, pos):
+    def update(self, pos):  # pos must be relative to the menu point
         global pressed
         if self.object.get_size()[1] >= pos[0] >= 0 and self.object.get_size()[0] >= pos[1] >= 0:
             self.color = (0, 200, 200)
@@ -60,6 +65,9 @@ class menuitem:
         self.object = self.font.render(self.name + self.add, True, self.color, (100, 100, 100))
 
 
+# This is the Class for the menu
+# screensize | [int, int] = The screen size (width x height)
+# actualfps | int = The FPS the menu should have
 class menu:
     def __init__(self, screensize, actualfps):
         pygame.init()
@@ -82,35 +90,35 @@ class menu:
             [[self.screensize[0]-self.rectwidth, 0], [self.rectwidth, self.screensize[1]]]
         ]
         self.mainitems = [
-            menuitem("Start Game without AI", 0, 1, self.screensize, lambda: self.game.spawnplayers(1, self.showlines)),
-            menuitem("Start Game with AI", 0, 1, self.screensize, lambda: self.game.spawnplayerswithai(self.showlines)),
-            menuitem("Settings", 0, 1, self.screensize, lambda: self.settingsscreen()),
-            menuitem("Exit", 0, 1, self.screensize, lambda:self.stop())
+            menuitem("Start Game without AI", 1, self.screensize, lambda: self.game.spawnplayers(1, self.showlines)),
+            menuitem("Start Game with AI", 1, self.screensize, lambda: self.game.spawnplayerswithai(self.showlines)),
+            menuitem("Settings", 1, self.screensize, lambda: self.settingsscreen()),
+            menuitem("Exit", 1, self.screensize, lambda:self.stop())
         ]
         self.settingsitems = [
-            menuitem("General Settings", 1, 1, self.screensize, lambda: self.generalsettingsscreen()),
-            menuitem("AI-Settings", 1, 1, self.screensize, lambda: self.aisettingsscreen()),
-            menuitem("Music", 1, 1, self.screensize, lambda:self.musicsettingsscreen()),
-            menuitem("Back", 1, 1, self.screensize, lambda:self.exitsettings())
+            menuitem("General Settings", 1, self.screensize, lambda: self.generalsettingsscreen()),
+            menuitem("AI-Settings", 1, self.screensize, lambda: self.aisettingsscreen()),
+            menuitem("Music", 1, self.screensize, lambda:self.musicsettingsscreen()),
+            menuitem("Back", 1, self.screensize, lambda:self.exitsettings())
         ]
         self.gensettingsitems = [
-            menuitem("Draw the 'Lasers' of the Car", 1, 1, self.screensize, test, switch=True),
-            menuitem("Back", 1, 1, self.screensize, lambda: self.exitgensettings())
+            menuitem("Draw the 'Lasers' of the Car", 1, self.screensize, 0, switch=True),
+            menuitem("Back", 1, self.screensize, lambda: self.exitgensettings())
         ]
         self.musicitems = [
-            menuitem("Funny Music", 1, 1, self.screensize, lambda:self.player.playm(1)),
-            menuitem("Russian Hardbass", 1, 1, self.screensize, lambda:self.player.playm(2)),
-            menuitem("More Russian Hardbass", 1, 1, self.screensize, lambda:self.player.playm(3)),
-            menuitem("Even More Russian Hardbass", 1, 1, self.screensize, lambda:self.player.playm(4)),
-            menuitem("OFF :(", 1, 1, self.screensize, lambda: self.player.playm(5)),
-            menuitem("Back", 1, 1, self.screensize, lambda: self.exitmusicsettingsscreen())
+            menuitem("Funny Music", 1, self.screensize, lambda:self.player.playm(1)),
+            menuitem("Russian Hardbass", 1, self.screensize, lambda:self.player.playm(2)),
+            menuitem("More Russian Hardbass", 1, self.screensize, lambda:self.player.playm(3)),
+            menuitem("Even More Russian Hardbass", 1, self.screensize, lambda:self.player.playm(4)),
+            menuitem("OFF :(", 1, self.screensize, lambda: self.player.playm(5)),
+            menuitem("Back", 1, self.screensize, lambda: self.exitmusicsettingsscreen())
         ]
         self.aiitems = [
-            menuitem("To edit the AI Settings:", 1, 1, self.screensize, test),
-            menuitem("Go to the working directory", 1, 1, self.screensize, test),
-            menuitem("of this program and edit:", 1, 1, self.screensize, test),
-            menuitem("'neat-config.txt'", 1, 1, self.screensize, test),
-            menuitem("Back", 1, 1, self.screensize, lambda: self.exitaisettingsscreen())
+            menuitem("To edit the AI Settings:", 1, self.screensize, 0),
+            menuitem("Go to the working directory", 1, self.screensize, 0),
+            menuitem("of this program and edit:", 1, self.screensize, 0),
+            menuitem("'neat-config.txt'", 1, self.screensize, 0),
+            menuitem("Back", 1, self.screensize, lambda: self.exitaisettingsscreen())
         ]
         self.mousepos = pygame.mouse.get_pos()
         self.game = Game()

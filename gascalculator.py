@@ -4,6 +4,8 @@ import time
 thr = 0.003
 
 
+# This class calculates the speed of the Car based on the FPS, so that Lag spikes do not interfere with the
+# acceleration
 class gas:
     def __init__(self):
         self.lastgas = 0
@@ -35,6 +37,8 @@ class gas:
             return ((self.time/1000)**1.25*6) * (1/(fps/30))
 
 
+# This Class calculates the rotation of the Cars based on the FPS, so that Lag spikes do not interfere with the
+# rotation
 class steering:
     def __init__(self, angle):
         self.originalangle = angle
@@ -42,7 +46,7 @@ class steering:
 
     def call(self, steer, fps):
         if fps == 0:
-            fps = 300
+            return self.angle
         if steer != 0:
             if steer == 1:
                 self.angle += 5 * (1/(fps/30))

@@ -7,6 +7,10 @@ import _thread
 import visualize
 
 
+# This function plots the best player's neural network in the middle of the screen
+# config | neat.config.Config = The configuration of the network
+# ge | genomes[] = All the Genomes in one Array
+# bestplayer | car object = The best player, that gets plotted in the middle of the screen
 def picture(config, ge, bestplayer):
     global plot
     visualize.draw_net(config, ge[bestplayer.getid()], False)
@@ -15,7 +19,11 @@ def picture(config, ge, bestplayer):
     t = t[1] / t[0]
     plot = pygame.transform.scale(plot, (round(180 / t), 180))
 
-def pointInRect(point,rect):
+
+# This is the function that checks if a Point is in a given rect (to check if the Player hit a wall)
+# point | [int, int] = [x, y] Given Point
+# rect | [int, int, int, int] = [x, y, w, h] Given Rect
+def pointInRect(point, rect):
     x1, y1, w, h = rect
     x2, y2 = x1+w, y1+h
     x, y = point
@@ -25,6 +33,7 @@ def pointInRect(point,rect):
     return False
 
 
+# The Game class
 class Game:
     def __init__(self):
         # Some Initialize Stuff
@@ -34,18 +43,20 @@ class Game:
         pygame.display.set_icon(logo)  # Set the Logo
         pygame.display.set_caption("drive car")  # Set Title
         self.screen_width = 720  # DO NOT CHANGE screen width
-        self.screen_height = 540  # DO NOT CHANGE screen hight
+        self.screen_height = 540  # DO NOT CHANGE screen height
         self.screen = pygame.display.set_mode((self.screen_width, self.screen_height))  # Set screen size
         self.screen.fill((100, 100, 100))  # Fill the screen with the rgb Value of (100, 100, 100)
         self.ai = False     # Becomes true if AI is active
         self.ge = []    # Here all the Genomes are stored
         self.nets = []  # Here all neural nets will be stored
-        self.timer1 = 0
-        self.timer2 = 0
-        self.bestplayer = None
-        self.lastbestplayer = None
-        self.textfont = pygame.font.SysFont("comicsansms", 22)
-        self.showlines = False
+        self.timer1 = 0     # Tis is a Variable used to check the movement of a Car in a given time and delete the ones
+        # that do not move quickly
+        self.timer2 = 0     # Tis is a Variable used to check the movement of a Car in a given time and delete the ones
+        # that do not move quickly
+        self.bestplayer = None  # In this Variable the best player gets stored (updated every Frame)
+        self.lastbestplayer = None  # In this Variable the last best Player gets stored
+        self.textfont = pygame.font.SysFont("comicsansms", 22)  # The Font for the Game
+        self.showlines = False  # Variable if the 'Lasers' of the Cars get shown (DO NOT CHANGE THE DEFAULT HERE!)
         # Displayed Things (If you Change the Fences, you MUST change the boarders!!):
         self.fences = ([0, 0, 20, 540],
                        [0, 0, 720, 20],
@@ -59,7 +70,7 @@ class Game:
                        [600, 170, 20, 300],
                        [20, 170, 160, 20],
                        [180, 70, 20, 120],
-                       [180, 70, 520, 20])  # Pygame Rects
+                       [180, 70, 520, 20])  # The red feces of the Game
         self.boarders = [
             [[200, 90], [700, 90]],
             [[200, 90], [200, 190]],
@@ -79,11 +90,13 @@ class Game:
         self.fps = 0  # FPS of the Game
         self.actualfps = 30  # Set the FPS of the Game
 
+    # This function just redraws the Map
     def updateScreen(self):  # Update the displayed Level
         self.screen.fill((100, 100, 100))  # Fill the screen with the rgb Value of (100, 100, 100)
         for fence in self.fences:  # Draw all Fences
             pygame.draw.rect(self.screen, pygame.Color(255, 100, 0), fence)
 
+    # This function spawns in the Players (without AI!)
     def spawnplayers(self, count, showlines):
         self.players = []
         self.showlines = showlines
@@ -91,17 +104,18 @@ class Game:
             self.players.append(car(_, self.boarders, self.showlines))  # Initialize the cars
         self.runGame(0, 0)  # Run the Game
 
+    # This function spawns in the Players with AI
     def spawnplayerswithai(self, showlines):   # This function starts the Game with AI
-        self.showlines = showlines
+        self.showlines = showlines  # Define if the 'Lasers' of the Cars should be displayed
         self.ai = True  # Set the AI Variable to True
         locale_dir = os.path.dirname(__file__)  # Read the current file Path
         config_path = os.path.join(locale_dir, "neat-config.txt")  # Where is the NEAT config file?
         config = neat.config.Config(neat.DefaultGenome, neat.DefaultReproduction, neat.DefaultSpeciesSet,
-                                    neat.DefaultStagnation, config_path)    # Just set evrything to default in neat
-        p = neat.Population(config)     # Create Pupulation
+                                    neat.DefaultStagnation, config_path)    # Just set everything to default in neat
+        p = neat.Population(config)     # Create Population
         p.add_reporter(neat.StdOutReporter(True))  # Add Reporter
-        stats = neat.StatisticsReporter()   # Create a config for this Reporter
-        p.add_reporter(stats)   # Slap this config on the Reporter
+        stats = neat.StatisticsReporter()   # Set the Reporter
+        p.add_reporter(stats)   # Slap this Reporter on the Population
         winner = p.run(self.runGame, 100000)     # Let's Go (Max 100000 Generations)
 
     def runGame(self, genomes, config):
@@ -121,8 +135,9 @@ class Game:
         steer = 0   # Initially steer must be 0
         self.running = True     # Here we go!
         self.timer1 = 0
+        # Just setting some Variables (only necessary if ai is activated)
         if self.ai:
-            for _ in self.players:  # Just doeing some Initializing of the Players (only nesercarry if AI is activated)
+            for _ in self.players:
                 _.update(0, 0, self.fps)
                 self.updateScreen()
                 self.screen.blit(_.getObject(), _.getOrigin())
@@ -162,11 +177,13 @@ class Game:
 
                 # -----------------------------------------------------
                 # Check if car crashed into something and reset it than
+                # If ai:
+                # Also check if Car is moving with a speed of 0.5 pixels per Frame, if not, kill the Car
                 x, y = _.getPosition()
                 try:
                     _.setpoints(_.getpoints() + 0.3 * (1/(self.fps/30)) * gas)
                 except ZeroDivisionError:
-                    print("[ERROR] The FPS was 0, this is normal during startup!")
+                    print("[ERROR] FPS was 0, this is normal during startup!")
                 if self.ai:
                     if self.bestplayer.getpoints() < _.getpoints():
                         self.bestplayer = _
@@ -222,6 +239,11 @@ class Game:
                         elif event.key == pygame.K_a:
                             if steer == 1:
                                 steer = 0
+            # In this last Part of this spaghetti code, the neural net of the best Player gets drawn (if AI is active)
+            # This is outsourced to another thread, because it is a quite big workload
+            # Also the Net gets only updated every 0.1 second
+            # Then the FPS and the points of the best players get displayed
+            # Finally the screen gets updated
             if self.ai:
                 try:
                     if framecounter > 3 * (1/(self.fps/30)):
@@ -230,7 +252,7 @@ class Game:
                             self.lastbestplayer = self.bestplayer
                             _thread.start_new_thread(picture, (config, ge, self.bestplayer))
                 except ZeroDivisionError:
-                    print("[ERROR] The FPS was 0, this is normal during startup!")
+                    print("[ERROR] FPS was 0, this is normal during startup!")
                 try:
                     self.screen.blit(plot, (100,270))
                 except pygame.error:

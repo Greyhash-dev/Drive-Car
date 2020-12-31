@@ -11,4 +11,4 @@ try:
     game = menu([720, 540], 30)
     game.entry()
 except ModuleNotFoundError:
-    print("Missing dependencies! Try running 'pip install -r requirements.txt' or 'pip3 install -r requirements.txt'")
+    print("Missing dependencies! Try running './install.sh'")

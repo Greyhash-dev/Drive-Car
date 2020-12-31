@@ -1,6 +1,7 @@
 import pygame
 
 
+# This is a stolen function to rotate the Cars visually
 def blitRotate(image, pos, originPos, angle):     # A stolen function to rotate the Car accurately
     # calcaulate the axis aligned bounding box of the rotated image
     w, h       = image.get_size()

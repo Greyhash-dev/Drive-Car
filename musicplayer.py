@@ -4,7 +4,11 @@ import pygame
 import threading
 import time
 
+# This is possibly the simplest and most hacked together Music player you have ever seen, but i just
+# do not have the nerves right now to write a good music Player
 
+
+# This is the thread that runs in the background
 def run():
     global stop_threads, playing
     while True:
@@ -29,21 +33,25 @@ def run():
             playing = 0
 
 
+# This is the class of the Player
 class Player:
     def __init__(self):
-        pygame.mixer.pre_init(44100, 16, 2, 4096)
         global playing, stop_threads
-        stop_threads = False
-        playing = 0
-        pygame.init()
-        self.t1 = threading.Thread(target=run, daemon=True)
-        self.t1.start()
+        pygame.mixer.pre_init(44100, 16, 2, 4096)   # Initialize the pygame music player
+        stop_threads = False    # If this Value becomes True, the 'run' Thread will be terminated
+        playing = 0     # If set to a value < 0 - it starts Playing (1 = Funny, 2 = russian...) if set to more than
+        # there are songs, it simply stops playing
+        pygame.init()   # Initialize pygame
+        self.t1 = threading.Thread(target=run, daemon=True)     # Define the thread
+        self.t1.start()     # Start the thread
 
+    # This function simply kills the player
     def kill(self):
         global stop_threads
         stop_threads = True
         self.t1.join()
 
+    # This function is used to select a music that should be played or stop the music
     def playm(self, num):
         global playing
         playing = num
