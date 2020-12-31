@@ -42,7 +42,7 @@ if [ -n '$(pip3 --version | grep -Fw "python 3")' ]
 then
 VER="pip3"
 else
-if [ -n '$(pip --version | grep -Fw "python 2")' ]
+if [ -n '$(pip --version | grep -Fw "python 3")' ]
 then
 VER="pip"
 fi
@@ -51,12 +51,12 @@ fi
 if [ -z $VER ]
 then
 
-echo 'python not found. Do you want to install apt-package "python3" (y/n)'
+echo 'python not found. Do you want to install apt-package "python3" & "python3-pip" (y/n)'
 read -p "Are you sure? " -n 1 -r
 echo    # (optional) move to a new line
 if [[ $REPLY =~ ^[Yy]$ ]]
 then
-sudo apt-get install python3
+sudo apt-get install python3 python3-pip
 else
 exit
 fi
