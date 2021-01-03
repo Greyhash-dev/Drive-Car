@@ -34,10 +34,10 @@ class car:
         self.id = carid  # Every Car has his own ID, can be useful later
         self.car = pygame.image.load("./graphics/car.png")  # Load in the Car graphics
         self.car.set_colorkey((0, 255, 0))  # Everything green gets cut out
-        self.position = [350, 500]  # Position Array [x, y]
-        self.rotation = 90  # Rotation Variable
+        self.position = [50, 200]  # Position Array [x, y]
+        self.rotation = 0  # Rotation Variable
         self.gasClass = gas()  # This will be used to calculate the acceleration
-        self.origin = [350, 500]  # Position Array after giving it to the rotation Algorithm
+        self.origin = [50, 200]  # Position Array after giving it to the rotation Algorithm
         self.rotatedCar = pygame.image.load("./graphics/car.png")  # Car Object after the rotation Algorithm had it.
         self.steerClass = steering(self.rotation)  # Class to calculate the steering
         self.acceleration = 0  # Acceleration of the Car
@@ -116,8 +116,8 @@ class car:
         return self.car.get_size()
 
     def respawn(self):
-        self.position = [350, 500]
-        self.origin = [350, 500]
+        self.position = [50, 200]
+        self.origin = [50, 200]
         self.steerClass.reset()
         self.checkpointcolor = 201
         self.points = 0

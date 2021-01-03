@@ -18,6 +18,7 @@ def picture(config, ge, bestplayer):
     t = plot.get_size()
     t = t[1] / t[0]
     plot = pygame.transform.scale(plot, (round(180 / t), 180))
+    plot.set_colorkey((255, 255, 255))
 
 
 # This is the function that checks if a Point is in a given rect (to check if the Player hit a wall)
@@ -33,17 +34,27 @@ def pointInRect(point, rect):
     return False
 
 
+def getlines(cubes):
+    lines = []
+    for _ in cubes:
+        lines.append([[_[0], _[1]], [_[0] + _[2], _[1]]])
+        lines.append([[_[0], _[1]], [_[0], _[1] + _[3]]])
+        lines.append([[_[0] + _[2], _[1]], [_[0] + _[2], _[1] + _[3]]])
+        lines.append([[_[0], _[1] + _[3]], [_[0] + _[2], _[1] + _[3]]])
+    return lines
+
+
 # The Game class
 class Game:
-    def __init__(self):
+    def __init__(self, screensize):
         # Some Initialize Stuff
         pygame.init()  # Initialize Pygame
         self.players = []  # In this Array will be stored all Objects once spawnplayers is executed
         logo = pygame.image.load("./graphics/logo32x32.png")  # Load in the Logo
         pygame.display.set_icon(logo)  # Set the Logo
         pygame.display.set_caption("drive car")  # Set Title
-        self.screen_width = 720  # DO NOT CHANGE screen width
-        self.screen_height = 540  # DO NOT CHANGE screen height
+        self.screen_width = screensize[0]  # DO NOT CHANGE screen width
+        self.screen_height = screensize[1]  # DO NOT CHANGE screen height
         self.screen = pygame.display.set_mode((self.screen_width, self.screen_height))  # Set screen size
         self.screen.fill((100, 100, 100))  # Fill the screen with the rgb Value of (100, 100, 100)
         self.ai = False     # Becomes true if AI is active
@@ -58,33 +69,8 @@ class Game:
         self.textfont = pygame.font.SysFont("comicsansms", 22)  # The Font for the Game
         self.showlines = False  # Variable if the 'Lasers' of the Cars get shown (DO NOT CHANGE THE DEFAULT HERE!)
         # Displayed Things (If you Change the Fences, you MUST change the boarders!!):
-        self.fences = ([0, 0, 20, 540],
-                       [0, 0, 720, 20],
-                       [700, 0, 20, 540],
-                       [0, 520, 720, 20],
-                       [80, 450, 540, 20],
-                       [80, 250, 20, 200],
-                       [80, 250, 200, 20],
-                       [260, 170, 20, 100],
-                       [260, 170, 350, 20],
-                       [600, 170, 20, 300],
-                       [20, 170, 160, 20],
-                       [180, 70, 20, 120],
-                       [180, 70, 520, 20])  # The red feces of the Game
-        self.boarders = [
-            [[200, 90], [700, 90]],
-            [[200, 90], [200, 190]],
-            [[20, 190], [200, 190]],
-            [[20, 190], [20, 520]],
-            [[700, 520], [20, 520]],
-            [[700, 520], [700, 90]],
-            [[80, 470], [620, 470]],
-            [[620, 170], [620, 470]],
-            [[260, 170], [620, 170]],
-            [[260, 170], [260, 250]],
-            [[80, 250], [260, 250]],
-            [[80, 250], [80, 470]]
-        ]  # 2D Integer Array
+        self.fences = []
+        self.boarders = []
         self.running = True  # Main game loop
         self.clock = pygame.time.Clock()  # Pygame clock
         self.fps = 0  # FPS of the Game
@@ -94,10 +80,12 @@ class Game:
     def updateScreen(self):  # Update the displayed Level
         self.screen.fill((100, 100, 100))  # Fill the screen with the rgb Value of (100, 100, 100)
         for fence in self.fences:  # Draw all Fences
-            pygame.draw.rect(self.screen, pygame.Color(255, 100, 0), fence)
+            pygame.draw.rect(self.screen, (255, 0, 0), fence)
 
     # This function spawns in the Players (without AI!)
-    def spawnplayers(self, count, showlines):
+    def spawnplayers(self, count, showlines, fences):
+        self.fences = fences
+        self.boarders = getlines(self.fences)
         self.players = []
         self.showlines = showlines
         for _ in range(0, count):  # Create all the Players
@@ -105,7 +93,9 @@ class Game:
         self.runGame(0, 0)  # Run the Game
 
     # This function spawns in the Players with AI
-    def spawnplayerswithai(self, showlines):   # This function starts the Game with AI
+    def spawnplayerswithai(self, showlines, fences):   # This function starts the Game with AI
+        self.fences = fences
+        self.boarders = getlines(self.fences)
         self.showlines = showlines  # Define if the 'Lasers' of the Cars should be displayed
         self.ai = True  # Set the AI Variable to True
         locale_dir = os.path.dirname(__file__)  # Read the current file Path
@@ -150,6 +140,7 @@ class Game:
             t = plot.get_size()
             t = t[1] / t[0]
             plot = pygame.transform.scale(plot, (round(180/t), 180))
+            plot.set_colorkey((255, 255, 255))
         while self.running:
             if self.ai:
                 framecounter += 1
@@ -254,15 +245,19 @@ class Game:
                 except ZeroDivisionError:
                     print("[ERROR] FPS was 0, this is normal during startup!")
                 try:
-                    self.screen.blit(plot, (100,270))
+                    self.screen.blit(plot, (95,175))
                 except pygame.error:
                     print("[ERROR] Blit was changed when tried to display it, this is normal if it happens sometimes1")
                 fps = self.textfont.render((str(round(self.fps))+"fps"), True, (0, 0, 128), (100, 100, 100))
-                self.screen.blit(fps, (20, 20))
+                fps.set_colorkey((100, 100, 100))
+                self.screen.blit(fps, (0, 0))
                 points = self.textfont.render((str(round(self.bestplayer.getpoints())) + "Points"), True, (0, 0, 128),
                                               (100, 100, 100))
-                self.screen.blit(points, (20, 20+fps.get_size()[1]))
+                points.set_colorkey((100, 100, 100))
+                self.screen.blit(points, (0, 0+fps.get_size()[1]))
             if not self.ai:
-                points = self.textfont.render((str(round(self.players[0].getpoints())) + "Points"), True, (0, 0, 128), (100, 100, 100))
-                self.screen.blit(points, (20, 20))
+                points = self.textfont.render((str(round(self.players[0].getpoints())) + "Points"), True, (0, 0, 128),
+                                              (100, 100, 100))
+                points.set_colorkey((100, 100, 100))
+                self.screen.blit(points, (0, 0))
             pygame.display.flip()  # update the screen

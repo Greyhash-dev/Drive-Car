@@ -5,6 +5,7 @@ import os
 import time
 from gameenv import Game
 from musicplayer import Player
+from leveleditor import editor
 
 
 # Global Variable if the Mouse button got pressed, although this is not really clean, it was the simplest way i could
@@ -83,15 +84,20 @@ class menu:
         self.title = "Drive-Car!"
         self.recthight = int(self.screensize[1]/40)
         self.rectwidth = int(self.screensize[0]/(40*(screensize[0] / screensize[1])))
+        self.leveleditor = editor(self.screensize, self.actualfps)
         self.rects = [
             [[0, 0], [self.screensize[0], self.recthight]],
             [[0, 0], [self.rectwidth, self.screensize[1]]],
             [[0, self.screensize[1]-self.recthight], [self.screensize[0], self.recthight]],
             [[self.screensize[0]-self.rectwidth, 0], [self.rectwidth, self.screensize[1]]]
         ]
+        self.fences = self.leveleditor.export()
         self.mainitems = [
-            menuitem("Start Game without AI", 1, self.screensize, lambda: self.game.spawnplayers(1, self.showlines)),
-            menuitem("Start Game with AI", 1, self.screensize, lambda: self.game.spawnplayerswithai(self.showlines)),
+            menuitem("Start Game without AI", 1, self.screensize, lambda: self.game.spawnplayers(1, self.showlines,
+                                                                                                 self.fences)),
+            menuitem("Start Game with AI", 1, self.screensize, lambda: self.game.spawnplayerswithai(self.showlines,
+                                                                                                    self.fences)),
+            menuitem("Map Edit", 1, self.screensize, lambda: self.mapEditor()),
             menuitem("Settings", 1, self.screensize, lambda: self.settingsscreen()),
             menuitem("Exit", 1, self.screensize, lambda:self.stop())
         ]
@@ -121,7 +127,7 @@ class menu:
             menuitem("Back", 1, self.screensize, lambda: self.exitaisettingsscreen())
         ]
         self.mousepos = pygame.mouse.get_pos()
-        self.game = Game()
+        self.game = Game(self.screensize)
         self.settings = True
         self.gensettings = True
         self.musicsettings = True
@@ -272,6 +278,9 @@ class menu:
 
     def setshowlines(self, x):
         self.showlines = x
+
+    def mapEditor(self):
+        self.fences = self.leveleditor.run()
 
     def press(self):
         global pressed

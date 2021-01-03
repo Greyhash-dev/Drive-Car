@@ -8,7 +8,7 @@ try:
     import graphviz
     import matplotlib.pyplot
     import numpy
-    game = menu([720, 540], 30)
+    game = menu([1080, 720], 30)
     game.entry()
 except ModuleNotFoundError:
     print("Missing dependencies! Try running './install.sh'")

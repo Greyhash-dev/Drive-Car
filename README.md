@@ -26,8 +26,16 @@ sudo apt-get install graphviz
 python main.py
 ```
 ## The Project:
+![plot](./game.png) <br>
 This is my first Project with AI, I hope you like it!
-I will document and tidy up the Code soon!
+
+### Map Edit shortcuts:
+ESC - Exit **WITHOUT** saving <br>
+E - Exit with saving <br>
+F - Fill only <br>
+D - Clear only <br>
+R - Range select <br>
+C - Clear everything <br>
 
 ### Debugging:
 For the Error 'AttributeError: module 'neat' has no attribute 'config'':
